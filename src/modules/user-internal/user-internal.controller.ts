@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserInternalService } from './user-internal.service';
-import { CreateUserInternalDto } from './dto/create-user-internal.dto';
-import { UpdateUserInternalDto } from './dto/update-user-internal.dto';
+import { CreateUserInternalDto } from './dto/userInternalDTO';
 
 @Controller('user-internal')
 export class UserInternalController {
@@ -9,7 +8,7 @@ export class UserInternalController {
 
   @Post()
   create(@Body() createUserInternalDto: CreateUserInternalDto) {
-    return this.userInternalService.create(createUserInternalDto);
+    return this.userInternalService.register(createUserInternalDto);
   }
 
   @Get()
@@ -23,12 +22,12 @@ export class UserInternalController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserInternalDto: UpdateUserInternalDto) {
-    return this.userInternalService.update(+id, updateUserInternalDto);
+  update(@Param('id') id: string) {
+    return this.userInternalService.update(+id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userInternalService.remove(+id);
+  delete(@Param('id') id: string) {
+    return this.userInternalService.delete(id);
   }
 }

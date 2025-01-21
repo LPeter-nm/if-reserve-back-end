@@ -6,7 +6,7 @@ import { PrismaService } from 'src/database/PrismaService';
 export class UserService {
   constructor(private readonly prisma: PrismaService){}
 
-  async create(body: CreateUserDto) { 
+  async register(body: CreateUserDto) { 
     if(body.type_User === Type_User.SERVIDOR){
       body.role = Role.ADMIN
     } else {
@@ -48,34 +48,17 @@ export class UserService {
     return users;
   }
 
-  async findOne(id: string) {
-    const user = this.prisma.user.findUnique({
+  async findOne(email: string) {
+    const usrCheck = await this.prisma.user.findFirst({
       where: {
-        id
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        userExternal: {
-          select: {
-            id: true,
-          }
-        },
-        userInternal: {
-          select: {
-            id: true,
-          }
-        }
+        email
       }
     })
-
-    if(!user) {
+    if(!usrCheck){
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND)
     }
-
-    return user;
+    
+    return usrCheck;
 
   }
 

@@ -12,8 +12,7 @@ export enum Type_User {
 }
 
 export class CreateUserDto {
-    @IsNotEmpty()
-    role: Role;
+    role?: Role;
 
     @IsNotEmpty()
     type_User: Type_User;

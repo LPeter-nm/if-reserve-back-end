@@ -76,8 +76,8 @@ model User_Internal {
 model User_External {
   id String @id @default(uuid())
   cpf String @unique
-  phone String
-  address String
+  phone String?
+  address String?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
