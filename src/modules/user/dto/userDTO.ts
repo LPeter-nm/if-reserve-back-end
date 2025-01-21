@@ -16,5 +16,5 @@ export class CreateUserDto {
     role: Role;
 
     @IsNotEmpty()
-    type_User?: Type_User;
+    type_User: Type_User;
 }
