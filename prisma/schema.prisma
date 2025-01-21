@@ -44,6 +44,9 @@ enum Ocurrence {
 // Tabela usuário
 model User {
   id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
   type_User Type_User @default(ALUNO)
   role Role @default(USER)
   createdAt DateTime @default(now()) @map("created_at")
@@ -59,15 +62,10 @@ model User {
 // Tabela usuário interno 
 model User_Internal {
   id String @id @default(uuid())
-  // Atributos próprios
   registration String @unique
-  // Atributos padrões
-  name String
-  email String @unique
-  password String
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
 
   // Atributos de Relacionamento (especialização)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -77,14 +75,10 @@ model User_Internal {
 // Tabela usuário externo
 model User_External {
   id String @id @default(uuid())
-  // Atributos próprios
   cpf String @unique
   phone String
   address String
-  // Atributos padrões
-  name String
-  email String @unique
-  password String
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -110,6 +104,12 @@ model Restore {
 model Reserve {
   id String @id @default(uuid())
   type_Reserve type_Reserve @default(OFICIO)
+  ocurrence Ocurrence @default(EVENTO_UNICO)
+  date_Start DateTime
+  date_End DateTime
+  hour_Start DateTime
+  hour_End DateTime
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -119,6 +119,7 @@ model Reserve {
   sport Sport?
   classroom Classroom?
   event Event?
+  report Report?
 }
 
 // Tabela de reserva da quadra para ofício
@@ -128,11 +129,7 @@ model Sport {
   number_People Int 
   name_People String 
   request_Equipment String
-  ocurrence Ocurrence @default(EVENTO_UNICO)
-  date_Start DateTime
-  date_End DateTime
-  hour_Start DateTime
-  hour_End DateTime
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -145,10 +142,7 @@ model Classroom {
   id String @id @default(uuid())
   course String
   matter String
-  date_Start DateTime
-  date_End DateTime
-  hour_Start DateTime
-  hour_End DateTime
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -161,10 +155,24 @@ model Event {
   id String @id @default(uuid())
   name_Event String
   description String
-  date_Start DateTime
-  date_End DateTime
-  hour_Start DateTime
-  hour_End DateTime
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  reserve Reserve @relation(fields: [reserveId], references: [id], onDelete: Cascade)
+  reserveId String @unique
+}
+
+model Report {
+  id String @id @default(uuid())
+  name_User String 
+  people_Appear String
+  requested_Equipment String
+  description_Court String
+  description_Equipment String
+  time_Used String
+  date_Used DateTime
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
