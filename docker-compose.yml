@@ -12,21 +12,5 @@ services:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
       - postgres_ifreserve_data:/var/lib/postgresql/data
-  api: 
-    image: node:alpine
-    container_name: node_ifreserve
-    restart: always
-    ports:
-      - "${NODE_PORT}:${NODE_PORT}"
-    working_dir: /if-reserve-back-end
-    volumes:
-      - .:/if-reserve-back-end
-      - /if-reserve-back-end/node_modules
-    command: sh -c "npm i && npx prisma migrate deploy && npm run start"
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: "${DATABASE_URL}"
-
 volumes:
   postgres_ifreserve_data:

@@ -9,22 +9,38 @@ export class UserInternalService {
   constructor(private readonly prisma: PrismaService){}
 
   async register(body: CreateUserInternalDto) {
+    // Verificando se o usuário existe (se ele selecionou seu tipo de usuário na página anterior)
     const userCheck = await this.prisma.user.findUnique({where: {id: body.userId}})
     if(!userCheck){
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND)
     }
 
+    // Criptografando a senha 
     const randomPass = randomInt(10, 16);
     const hashedPassword = await bcrypt.hash(body.password, randomPass);
 
-    const user = await this.prisma.user.update({
+    // Permitindo que todo servidor seja admin (fase inicial - ainda há muito o que melhorar)
+    const registrationUpper = body.registration.toUpperCase()
+    const serverCheck = registrationUpper.includes('TMN')
+    if(!serverCheck){
+      await this.prisma.user.update({
+        where: {id: body.userId},
+        data: {
+          role: 'ADMIN'
+        },
+      })    
+    }
+
+    // Registrando nome, email, senha, matrícula e a id do usuário 
+    await this.prisma.user.update({
       where: {id: body.userId},
       data: {
         name: body.name, 
         email: body.email,
         password: hashedPassword,
       },
-    })    
+    })
+
     const registerInternal = await this.prisma.user_Internal.create({
       data: {
         registration: body.registration,
@@ -36,7 +52,8 @@ export class UserInternalService {
           select: {
             name: true, 
             email: true, 
-            password: true
+            password: true, 
+            role: true
           }
         },
         registration: true,

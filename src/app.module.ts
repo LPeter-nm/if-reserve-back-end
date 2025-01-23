@@ -8,6 +8,8 @@ import { UserExternalModule } from './modules/user-external/user-external.module
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { CaslModule } from './modules/casl/casl.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,8 +26,9 @@ import { CaslModule } from './modules/casl/casl.module';
     {
       provide: APP_GUARD,
       useClass: AuthGuard
-    }
+    },
+    AppService
   ],
-  controllers: [],
+  controllers: [AppController],
 })
 export class AppModule {}

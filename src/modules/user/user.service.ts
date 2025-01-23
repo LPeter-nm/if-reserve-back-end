@@ -7,18 +7,12 @@ export class UserService {
   constructor(private readonly prisma: PrismaService){}
 
   async register(body: CreateUserDto) { 
-    if(body.type_User === Type_User.SERVIDOR){
-      body.role = Role.ADMIN
-    } else {
-      body.role = Role.USER
-    }
-
     const user = await this.prisma.user.create({
       data: {
         name: "",
         email: "",
         password: "",
-        role: body.role,
+        role: "USER",
         type_User: body.type_User,
         },
       select: {

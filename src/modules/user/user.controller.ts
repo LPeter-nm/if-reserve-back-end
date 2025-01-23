@@ -12,7 +12,7 @@ import { Action } from '../casl/casl-ability.factory/actionDTO/casl-actionDTO';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('register')
   @Public()
   register(@Body() body: CreateUserDto) {
     return this.userService.register(body);
@@ -26,12 +26,13 @@ export class UserController {
   }
 
   @Get(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
-  @UseGuards(UseGuards)
   @Delete(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
   delete(@Param('id') id: string) {
     return this.userService.delete(id);
   }
