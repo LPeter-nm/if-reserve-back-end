@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserExternalDto } from './dto/userExternalDTO';
 import { PrismaService } from 'src/database/PrismaService';
 import * as bcrypt from 'bcryptjs';
@@ -9,21 +9,24 @@ import { randomInt } from 'crypto';
 export class UserExternalService {
   constructor(private readonly prisma: PrismaService){}
   
+  // Registrando usuário externo no sistema
   async register(body: CreateUserExternalDto) {
+    // Checando se o usário não está registrado
     const usrExternalCheck = await this.prisma.user_External.findFirst({where: {userId: body.userId}})
     if(usrExternalCheck) throw new HttpException('Usuário já se registrou no sistema', HttpStatus.CONFLICT)  
-    
-
-    const userCheck = await this.prisma.user.findUnique({where: {id: body.userId}})
-    if(!userCheck) throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND)
-    
-
+      
     const cpfCheck = await this.prisma.user_External.findUnique({where: {cpf: body.cpf}})
     if(cpfCheck) throw new HttpException('CPF já cadastrado', HttpStatus.BAD_REQUEST)
     
+      // Checando se o usuário escolheu seu tipo de usuário
+    const userCheck = await this.prisma.user.findUnique({where: {id: body.userId}})
+    if(!userCheck) throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND)
+    
+    // Criptografando senha do usuário
     const randomPass = randomInt(10, 16);
     const hashedPassword = await bcrypt.hash(body.password, randomPass);
 
+    // Registrando dados gerais do usuário externo
     await this.prisma.user.update({
       where: {
         id: body.userId
@@ -35,6 +38,7 @@ export class UserExternalService {
       }
     })
 
+    // Registrando dados especificos do usuário externo
     const userExternal = await this.prisma.user_External.create({
       data: {
         cpf: body.cpf, 
@@ -62,6 +66,7 @@ export class UserExternalService {
     return userExternal;
   }
 
+  // Listando todos os usuários externos
   async findAll() {
     const users = await this.prisma.user_External.findMany({
       select: {
@@ -81,14 +86,17 @@ export class UserExternalService {
     return users;
   }
 
+  // Listando um usuário externo 
   async findOne(id: string) {
     return `This action returns a #${id} userExternal`;
   }
 
+  // Atualizando dados do usuário externo
   update(id: number) {
     return `This action updates a #${id} userExternal`;
   }
 
+  // Deletando dados do usuário externo
   async delete(id: string) {
     const userCheck = await this.prisma.user_External.findUnique({where: {id}})
     if(!userCheck) {
