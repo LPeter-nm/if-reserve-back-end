@@ -20,18 +20,20 @@ export class UserController {
 
 
   @Get()
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
   @Delete(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
   delete(@Param('id') id: string) {
     return this.userService.delete(id);

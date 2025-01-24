@@ -13,19 +13,28 @@ export class PoliciesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const { user } = context.switchToHttp().getRequest();
+  
+    if (!user) {
+      throw new ForbiddenException({
+        statusCode: 403,
+        message: 'Usuário não autenticado.',
+        error: 'Acesso restrito',
+      });
+    }
+  
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
         CHECK_POLICIES_KEY,
         context.getHandler(),
       ) || [];
-
-    const { user } = context.switchToHttp().getRequest();
+  
     const ability = this.caslAbilityFactory.createForUser(user);
-
+  
     const allPoliciesValid = policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability),
     );
-    
+  
     if (!allPoliciesValid) {
       throw new ForbiddenException({
         statusCode: 403,
@@ -33,9 +42,10 @@ export class PoliciesGuard implements CanActivate {
         error: 'Acesso restrito',
       });
     }
-
+  
     return allPoliciesValid;
   }
+  
 
   private execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {
     if (typeof handler === 'function') {

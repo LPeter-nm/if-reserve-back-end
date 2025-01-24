@@ -15,6 +15,18 @@ export class UserInternalService {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND)
     }
 
+    // Verificando se o usuário não já se registrou antes
+    const usrCheck = await this.prisma.user.findFirst({where: {email: body.email}})
+    if(usrCheck){
+      throw new HttpException('Usuário já se registrou no sistema', HttpStatus.CONFLICT)
+    }
+
+    // Verificando matricula 
+    const registrationCheck = await this.prisma.user_Internal.findFirst({where: {registration: body.registration}})
+    if(registrationCheck){
+      throw new HttpException('Usuário já se registrou no sistema', HttpStatus.CONFLICT)
+    }
+
     // Criptografando a senha 
     const randomPass = randomInt(10, 16);
     const hashedPassword = await bcrypt.hash(body.password, randomPass);
@@ -43,7 +55,7 @@ export class UserInternalService {
 
     const registerInternal = await this.prisma.user_Internal.create({
       data: {
-        registration: body.registration,
+        registration: registrationUpper,
         userId: body.userId,
       }, 
       select: {
@@ -73,7 +85,8 @@ export class UserInternalService {
         user: {
           select: {
             name: true, 
-            email: true
+            email: true,
+            role: true
           }
         },
         registration: true, 

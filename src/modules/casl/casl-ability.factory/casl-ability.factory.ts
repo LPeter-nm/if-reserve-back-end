@@ -9,15 +9,22 @@ export type AppAbility = Ability<[Action, Subjects]>;
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    const { can, build } = new AbilityBuilder<Ability<[Action, Subjects]>
+    const { can, cannot, build } = new AbilityBuilder<Ability<[Action, Subjects]>
     >(Ability as AbilityClass<AppAbility>);
 
-    if (user?.role === 'ADMIN') {
-      can(Action.Admin, 'all');
-    } else {
-      can(Action.User, 'all'); 
+    switch(user?.role){
+      case 'GENERAL':
+        can(Action.General, 'all');
+        break;
+      case 'ADMIN':
+        can(Action.Admin, 'all');
+        cannot(Action.General, 'all')
+        break;
+      case 'USER':
+        can(Action.User, 'all');
+        
+        break;
     }
-
     return build({
       detectSubjectType: (item: any) =>
         item.constructor as ExtractSubjectType<Subjects>,

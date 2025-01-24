@@ -10,14 +10,15 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { CaslModule } from './modules/casl/casl.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaService } from './database/PrismaService';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }), 
     ScheduleModule.forRoot(), 
-    AuthModule,
-    CaslModule, 
+    CaslModule,
+    AuthModule, 
     UserModule, 
     UserInternalModule, 
     UserExternalModule
@@ -27,7 +28,8 @@ import { AppService } from './app.service';
       provide: APP_GUARD,
       useClass: AuthGuard
     },
-    AppService
+    AppService, 
+    PrismaService
   ],
   controllers: [AppController],
 })
