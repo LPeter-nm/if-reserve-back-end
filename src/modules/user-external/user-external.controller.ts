@@ -2,7 +2,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserExternalService } from './user-external.service';
 import { CreateUserExternalDto } from './dto/userExternalDTO';
-import { AuthGuard } from '../auth/auth.guard';
 import { Public } from '../auth/skipAuth/skipAuth';
 import { CheckPolicies } from '../casl/guards/policies.check';
 import { AppAbility } from '../casl/casl-ability.factory/casl-ability.factory';

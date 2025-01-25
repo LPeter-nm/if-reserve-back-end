@@ -22,7 +22,8 @@ export class CaslAbilityFactory {
         break;
       case 'USER':
         can(Action.User, 'all');
-        
+        cannot(Action.Admin, 'all')
+        cannot(Action.General, 'all')
         break;
     }
     return build({

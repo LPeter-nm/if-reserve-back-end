@@ -1,5 +1,5 @@
-import { Body, HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto, Role, Type_User } from './dto/userDTO';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/userDTO';
 import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
