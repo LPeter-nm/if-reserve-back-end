@@ -12,10 +12,10 @@ import { CaslModule } from '../casl/casl.module';
     UserModule,
     CaslModule,
     JwtModule.register({
-      global: true, 
+      global: true,
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '43200s' },
-    })
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, UserService, PrismaService],

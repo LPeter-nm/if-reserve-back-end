@@ -5,11 +5,11 @@ import { createAppDto } from './appDto/appDto';
 
 @Controller('app')
 export class AppController {
-    constructor(private readonly usrGeneral: AppService){}
+  constructor(private readonly usrGeneral: AppService) {}
 
-    // @Public()
-    @Post()
-    registerGeneral(@Body() body: createAppDto){
-        return this.usrGeneral.userAdmin(body)
-    }
+  // @Public()
+  @Post()
+  registerGeneral(@Body() body: createAppDto) {
+    return this.usrGeneral.userAdmin(body);
+  }
 }

@@ -1,6 +1,11 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { CaslAbilityFactory } from '../casl-ability.factory/casl-ability.factory'; 
+import { CaslAbilityFactory } from '../casl-ability.factory/casl-ability.factory';
 import { PolicyHandler } from './policies.handler';
 import { AppAbility } from '../casl-ability.factory/casl-ability.factory';
 import { CHECK_POLICIES_KEY } from './policies.check';
@@ -13,28 +18,19 @@ export class PoliciesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const { user } = context.switchToHttp().getRequest();
-  
-    if (!user) {
-      throw new ForbiddenException({
-        statusCode: 403,
-        message: 'Usuário não autenticado.',
-        error: 'Acesso restrito',
-      });
-    }
-  
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
         CHECK_POLICIES_KEY,
         context.getHandler(),
       ) || [];
-  
+
+    const { user } = context.switchToHttp().getRequest();
     const ability = this.caslAbilityFactory.createForUser(user);
-  
+
     const allPoliciesValid = policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability),
     );
-  
+
     if (!allPoliciesValid) {
       throw new ForbiddenException({
         statusCode: 403,
@@ -42,10 +38,9 @@ export class PoliciesGuard implements CanActivate {
         error: 'Acesso restrito',
       });
     }
-  
+
     return allPoliciesValid;
   }
-  
 
   private execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {
     if (typeof handler === 'function') {

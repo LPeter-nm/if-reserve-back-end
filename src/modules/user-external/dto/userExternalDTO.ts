@@ -1,23 +1,23 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
-// Atributos para registro do usuário externo 
+// Atributos para registro do usuário externo
 export class CreateUserExternalDto {
-    @IsNotEmpty()
-    name: string;
+  @IsNotEmpty()
+  name: string;
 
-    @IsNotEmpty()
-    email: string;
+  @IsNotEmpty()
+  email: string;
 
-    @IsNotEmpty()
-    password: string
+  @IsNotEmpty()
+  password: string;
 
-    @IsNotEmpty()
-    cpf: string;
+  @IsNotEmpty()
+  cpf: string;
 
-    phone?: string;
+  phone?: string;
 
-    address?: string;
+  address?: string;
 
-    @IsNotEmpty()
-    userId: string
+  @IsNotEmpty()
+  userId: string;
 }

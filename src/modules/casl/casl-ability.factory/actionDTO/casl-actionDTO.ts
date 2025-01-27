@@ -1,17 +1,17 @@
 export class User {
-    id: number;
+  id: string;
 
-    role: Role;
+  role: Role;
 }
 
 export enum Action {
-    General = 'control',
-    Admin = 'manage',
-    User = 'read',
+  General = 'control',
+  Admin = 'manage',
+  User = 'read',
 }
 
 export enum Role {
-    GENERAL = 'GENERAL',
-    USER = 'USER',
-    ADMIN = 'ADMIN',
+  GENERAL = 'GENERAL',
+  USER = 'USER',
+  ADMIN = 'ADMIN',
 }

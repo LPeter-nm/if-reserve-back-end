@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import {ScheduleModule} from '@nestjs/schedule'
-import {ConfigModule} from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule';
+import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { UserInternalModule } from './modules/user-internal/user-internal.module';
@@ -14,22 +14,22 @@ import { PrismaService } from './database/PrismaService';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
-    }), 
-    ScheduleModule.forRoot(), 
+      isGlobal: true,
+    }),
+    ScheduleModule.forRoot(),
     CaslModule,
-    AuthModule, 
-    UserModule, 
-    UserInternalModule, 
-    UserExternalModule
+    AuthModule,
+    UserModule,
+    UserInternalModule,
+    UserExternalModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthGuard
+      useClass: AuthGuard,
     },
-    AppService, 
-    PrismaService
+    AppService,
+    PrismaService,
   ],
   controllers: [AppController],
 })

@@ -1,19 +1,19 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export enum Role {
-    ADMIN = "ADMIN",
-    USER = "USER",
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 
 export enum Type_User {
-    ALUNO = "ALUNO",
-    SERVIDOR = "SERVIDOR",
-    EXTERNO = "EXTERNO",
+  ALUNO = 'ALUNO',
+  SERVIDOR = 'SERVIDOR',
+  EXTERNO = 'EXTERNO',
 }
 
 export class CreateUserDto {
-    role?: Role;
+  role?: Role;
 
-    @IsNotEmpty()
-    type_User: Type_User;
+  @IsNotEmpty()
+  type_User: Type_User;
 }

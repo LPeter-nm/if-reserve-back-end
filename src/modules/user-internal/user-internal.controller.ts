@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  ForbiddenException,
+  Res,
+} from '@nestjs/common';
 import { UserInternalService } from './user-internal.service';
 import { CreateUserInternalDto } from './dto/userInternalDTO';
 import { Public } from '../auth/skipAuth/skipAuth';
@@ -25,8 +37,16 @@ export class UserInternalController {
   }
 
   @Get(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
   findOne(@Param('id') id: string) {
-    return this.userInternalService.findOne(+id);
+    // const currentUsr = req.user;
+    // if (id != currentUsr.id) {
+    //   throw new ForbiddenException(
+    //     'Você só pode acessar seus dados | deixe de ser curioso',
+    //   );
+    // }
+    // res.status(200).json({ usr: this.userInternalService.findOne(id) });
+    return this.userInternalService.findOne(id);
   }
 
   @Patch(':id')
