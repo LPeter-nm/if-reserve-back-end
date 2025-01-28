@@ -4,10 +4,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
+  Req,
+  Put,
 } from '@nestjs/common';
 import { UserExternalService } from './user-external.service';
 import { CreateUserExternalDto } from './dto/userExternalDTO';
@@ -17,16 +18,15 @@ import { AppAbility } from '../casl/casl-ability.factory/casl-ability.factory';
 import { Action } from '../casl/casl-ability.factory/actionDTO/casl-actionDTO';
 import { PoliciesGuard } from '../casl/guards/policies.guard';
 
-// Garantindo a utilização da autenticação e autorização do usuário
 @UseGuards(PoliciesGuard)
 @Controller('userexternal')
 export class UserExternalController {
   constructor(private readonly userExternalService: UserExternalService) {}
 
   @Public()
-  @Post('registerExternal')
-  create(@Body() createUserExternalDto: CreateUserExternalDto) {
-    return this.userExternalService.register(createUserExternalDto);
+  @Post('register')
+  create(@Body() body: CreateUserExternalDto) {
+    return this.userExternalService.registerExternal(body);
   }
 
   @Get('users')
@@ -36,13 +36,13 @@ export class UserExternalController {
   }
 
   @Get(':id')
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
-  findOne(@Param('id') id: string) {
-    return this.userExternalService.findOne(id);
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
+  findOne(@Param('id') id: string, @Req() req: any) {
+    return this.userExternalService.findOne(id, req);
   }
 
-  @Patch(':id')
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
+  @Put(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
   update(@Param('id') id: string, @Body() body: CreateUserExternalDto) {
     return this.userExternalService.update(id, body);
   }

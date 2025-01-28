@@ -16,3 +16,9 @@ export class CreateUserInternalDto {
   @IsNotEmpty()
   userId: string;
 }
+
+export class UpdateUserInternalDto {
+  name?: string;
+
+  password?: string;
+}

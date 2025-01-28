@@ -3,13 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
   Req,
-  ForbiddenException,
-  Res,
+  Put,
 } from '@nestjs/common';
 import { UserInternalService } from './user-internal.service';
 import { CreateUserInternalDto } from './dto/userInternalDTO';
@@ -25,12 +23,12 @@ export class UserInternalController {
   constructor(private readonly userInternalService: UserInternalService) {}
 
   @Public()
-  @Post()
-  create(@Body() createUserInternalDto: CreateUserInternalDto) {
-    return this.userInternalService.register(createUserInternalDto);
+  @Post('register')
+  create(@Body() body: CreateUserInternalDto) {
+    return this.userInternalService.register(body);
   }
 
-  @Get()
+  @Get('users')
   @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
   findAll() {
     return this.userInternalService.findAll();
@@ -38,23 +36,18 @@ export class UserInternalController {
 
   @Get(':id')
   @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
-  findOne(@Param('id') id: string) {
-    // const currentUsr = req.user;
-    // if (id != currentUsr.id) {
-    //   throw new ForbiddenException(
-    //     'Você só pode acessar seus dados | deixe de ser curioso',
-    //   );
-    // }
-    // res.status(200).json({ usr: this.userInternalService.findOne(id) });
-    return this.userInternalService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req: any) {
+    return this.userInternalService.findOne(id, req);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.userInternalService.update(+id);
+  @Put(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
+  update(@Param('id') id: string, @Body() body: CreateUserInternalDto) {
+    return this.userInternalService.update(id, body);
   }
 
   @Delete(':id')
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
   delete(@Param('id') id: string) {
     return this.userInternalService.delete(id);
   }

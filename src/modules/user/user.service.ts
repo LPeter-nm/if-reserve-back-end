@@ -7,34 +7,48 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async register(body: CreateUserDto) {
-    const user = await this.prisma.user.create({
-      data: {
-        name: '',
-        email: '',
-        password: '',
-        role: 'USER',
-        type_User: body.type_User,
-      },
-      select: {
-        id: true,
-        role: true,
-        type_User: true,
-      },
-    });
+    try {
+      const usr = await this.prisma.user.create({
+        data: {
+          name: '',
+          email: '',
+          password: '',
+          role: 'USER',
+          type_User: body.type_User,
+        },
+        select: {
+          id: true,
+          role: true,
+          type_User: true,
+        },
+      });
 
-    return user;
+      return usr;
+    } catch (error) {
+      return {
+        message: 'Erro ao criar usuário',
+        error: error,
+      };
+    }
   }
 
   async findAll() {
-    const users = await this.prisma.user.findMany({
-      select: {
-        id: true,
-        role: true,
-        type_User: true,
-      },
-    });
+    try {
+      const users = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          role: true,
+          type_User: true,
+        },
+      });
 
-    return users;
+      return users;
+    } catch (error) {
+      return {
+        message: 'Erro ao listar usuários',
+        error: error,
+      };
+    }
   }
 
   async findOne(email: string) {
