@@ -11,6 +11,10 @@ import { CaslModule } from './modules/casl/casl.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './database/PrismaService';
+import { ReserveModule } from './modules/reserve/reserve.module';
+import { ReserveSportModule } from './modules/reserve-sport/reserve-sport.module';
+import { ReserveClassroomModule } from './modules/reserve-classroom/reserve-classroom.module';
+import { ReserveEventModule } from './modules/reserve-event/reserve-event.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +26,10 @@ import { PrismaService } from './database/PrismaService';
     UserModule,
     UserInternalModule,
     UserExternalModule,
+    ReserveModule,
+    ReserveSportModule,
+    ReserveClassroomModule,
+    ReserveEventModule,
   ],
   providers: [
     {

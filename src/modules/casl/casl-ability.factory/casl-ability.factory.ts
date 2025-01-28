@@ -21,9 +21,11 @@ export class CaslAbilityFactory {
     switch (user?.role) {
       case 'GENERAL':
         can(Action.General, 'all');
+        can(Action.Admin, 'all');
         break;
       case 'ADMIN':
         can(Action.Admin, 'all');
+        can(Action.User, 'all');
         cannot(Action.General, 'all');
         break;
       case 'USER':
