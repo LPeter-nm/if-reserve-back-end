@@ -20,41 +20,40 @@ export class UserInternalService {
     const userCheck = await this.prisma.user.findUnique({
       where: { id: body.userId },
     });
-    if (!userCheck) {
+    if (!userCheck)
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+
+    // Garantindo que só usuários internos possam se registrar
+    if (userCheck.type_User === 'EXTERNO') {
+      throw new HttpException(
+        'Você não pode se registrar sendo externo',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const registrationCheck = await this.prisma.user_Internal.findFirst({
       where: { registration: body.registration },
     });
-    if (registrationCheck) {
-      throw new HttpException(
-        'Usuário já se registrou no sistema',
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    const randomPass = randomInt(10, 16);
-    const hashedPassword = await bcrypt.hash(body.password, randomPass);
-
-    const registrationUpper = body.registration.toUpperCase();
-    const serverCheck = registrationUpper.includes('TMN');
+    if (registrationCheck)
+      throw new HttpException('Matrícula já registrada', HttpStatus.CONFLICT);
 
     try {
-      // Garantindo que só usuários internos possam se registrar
-      if (userCheck.type_User === 'EXTERNO') {
-        throw new HttpException(
-          'Você não pode se registrar sendo externo',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      if (!serverCheck && userCheck.type_User === 'SERVIDOR') {
+      const registrationUpper = body.registration.toUpperCase();
+      const isAluno = /^\d{5}[A-Z]{3}\.[A-Z]{3}\d{4}$/.test(body.registration);
+      const isServer = /^\d{4,10}$/.test(body.registration);
+
+      if (!isAluno && userCheck.type_User === 'SERVIDOR' && isServer) {
         await this.prisma.user.update({
           where: { id: body.userId },
           data: {
             role: 'ADMIN',
           },
         });
+      } else if (!isAluno && userCheck.type_User === 'ALUNO') {
+        return {
+          message: 'Formato de matrícula incorreto',
+          status: HttpStatus.FORBIDDEN,
+        };
       }
 
       if (!body.email.includes('@'))
@@ -63,6 +62,8 @@ export class UserInternalService {
           HttpStatus.BAD_REQUEST,
         );
 
+      const randomPass = randomInt(10, 16);
+      const hashedPassword = await bcrypt.hash(body.password, randomPass);
       await this.prisma.user.update({
         where: { id: body.userId },
         data: {

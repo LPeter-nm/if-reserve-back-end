@@ -10,7 +10,10 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserInternalService } from './user-internal.service';
-import { CreateUserInternalDto } from './dto/userInternalDTO';
+import {
+  CreateUserInternalDto,
+  UpdateUserInternalDto,
+} from './dto/userInternalDTO';
 import { Public } from '../auth/skipAuth/skipAuth';
 import { CheckPolicies } from '../casl/guards/policies.check';
 import { AppAbility } from '../casl/casl-ability.factory/casl-ability.factory';
@@ -42,12 +45,12 @@ export class UserInternalController {
 
   @Put(':id')
   @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
-  update(@Param('id') id: string, @Body() body: CreateUserInternalDto) {
+  update(@Param('id') id: string, @Body() body: UpdateUserInternalDto) {
     return this.userInternalService.update(id, body);
   }
 
   @Delete(':id')
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.General, 'all'))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
   delete(@Param('id') id: string) {
     return this.userInternalService.delete(id);
   }

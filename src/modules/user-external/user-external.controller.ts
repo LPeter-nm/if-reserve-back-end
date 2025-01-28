@@ -11,7 +11,10 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserExternalService } from './user-external.service';
-import { CreateUserExternalDto } from './dto/userExternalDTO';
+import {
+  CreateUserExternalDto,
+  UpdateUserExternalDto,
+} from './dto/userExternalDTO';
 import { Public } from '../auth/skipAuth/skipAuth';
 import { CheckPolicies } from '../casl/guards/policies.check';
 import { AppAbility } from '../casl/casl-ability.factory/casl-ability.factory';
@@ -43,7 +46,7 @@ export class UserExternalController {
 
   @Put(':id')
   @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
-  update(@Param('id') id: string, @Body() body: CreateUserExternalDto) {
+  update(@Param('id') id: string, @Body() body: UpdateUserExternalDto) {
     return this.userExternalService.update(id, body);
   }
 
