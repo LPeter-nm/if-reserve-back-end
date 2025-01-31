@@ -32,6 +32,8 @@ export class UpdateReserveClassroomDto {
 
   matter?: string;
 
+  ocurrence?: Ocurrence;
+
   date_Start?: string;
 
   date_End?: string;

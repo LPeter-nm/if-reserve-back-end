@@ -40,7 +40,7 @@ export class ReserveService {
       const reserve = await this.prisma.reserve.create({
         data: {
           ...body,
-          type_Reserve: 'OFICIO',
+          Type_Reserve: 'OFICIO',
           date_Start: '',
           date_End: '',
           hour_Start: '',
@@ -62,7 +62,7 @@ export class ReserveService {
       const reserves = await this.prisma.reserve.findMany({
         select: {
           id: true,
-          type_Reserve: true,
+          Type_Reserve: true,
         },
       });
 

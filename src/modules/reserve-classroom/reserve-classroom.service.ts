@@ -1,28 +1,195 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   CreateReserveClassroomDto,
   UpdateReserveClassroomDto,
 } from './dto/classroomDto';
+import { PrismaService } from 'src/database/PrismaService';
 
 @Injectable()
 export class ReserveClassroomService {
-  create(body: CreateReserveClassroomDto) {
-    return 'This action adds a new reserveClassroom';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(body: CreateReserveClassroomDto, req: any) {
+    if (req.user.role !== 'ADMIN')
+      throw new ForbiddenException(
+        'Somente administradores podem registrar aula',
+      );
+
+    try {
+      await this.prisma.reserve.update({
+        where: { id: body.reserveId },
+        data: {
+          ocurrence: body.ocurrence,
+          date_Start: body.date_Start,
+          date_End: body.date_End,
+          hour_Start: body.hr_Start,
+          hour_End: body.hr_End,
+        },
+      });
+      const classroom = await this.prisma.classroom.create({
+        data: {
+          course: body.course,
+          matter: body.matter,
+          reserveId: body.reserveId,
+        },
+        select: {
+          id: true,
+          course: true,
+          matter: true,
+          reserve: {
+            select: {
+              date_Start: true,
+              date_End: true,
+              hour_Start: true,
+              hour_End: true,
+            },
+          },
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      return classroom;
+    } catch (error) {
+      return {
+        message: 'Erro ao registrar aula',
+        error: error,
+      };
+    }
   }
 
-  findAll() {
-    return `This action returns all reserveClassroom`;
+  async findAll(req: any) {
+    if (req.user.role !== 'ADMIN')
+      throw new ForbiddenException(
+        'Somente administradores podem listar aulas',
+      );
+
+    try {
+      const classrooms = await this.prisma.classroom.findMany({
+        select: {
+          id: true,
+          course: true,
+          matter: true,
+          reserve: {
+            select: {
+              date_Start: true,
+              date_End: true,
+              hour_Start: true,
+              hour_End: true,
+            },
+          },
+        },
+      });
+
+      return classrooms;
+    } catch (error) {
+      return {
+        message: 'Erro ao listar as aulas',
+        error: error,
+      };
+    }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} reserveClassroom`;
+  async findOne(id: string) {
+    try {
+      const classroom = await this.prisma.classroom.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          course: true,
+          matter: true,
+          reserve: {
+            select: {
+              date_Start: true,
+              date_End: true,
+              hour_Start: true,
+              hour_End: true,
+            },
+          },
+        },
+      });
+
+      return classroom;
+    } catch (error) {
+      return {
+        message: 'Erro ao listar aula',
+        error: error,
+      };
+    }
   }
 
-  update(id: string, body: UpdateReserveClassroomDto) {
-    return `This action updates a #${id} reserveClassroom`;
+  async update(
+    reserveId: string,
+    id: string,
+    body: UpdateReserveClassroomDto,
+    req: any,
+  ) {
+    if (req.user.role !== 'ADMIN')
+      throw new ForbiddenException(
+        'Somente administradores podem atualizar a aula',
+      );
+
+    try {
+      await this.prisma.reserve.update({
+        where: { id: reserveId },
+        data: {
+          ocurrence: body.ocurrence,
+          date_Start: body.date_Start,
+          date_End: body.date_End,
+          hour_Start: body.hr_Start,
+          hour_End: body.hr_End,
+        },
+      });
+      const classroom = await this.prisma.classroom.update({
+        where: { id },
+        data: {
+          course: body.course,
+          matter: body.matter,
+        },
+        select: {
+          id: true,
+          course: true,
+          matter: true,
+          reserve: {
+            select: {
+              date_Start: true,
+              date_End: true,
+              hour_Start: true,
+              hour_End: true,
+            },
+          },
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      return classroom;
+    } catch (error) {
+      return {
+        message: 'Erro ao registrar aula',
+        error: error,
+      };
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} reserveClassroom`;
+  async remove(id: string, req: any) {
+    if (req.user.role !== 'ADMIN')
+      throw new ForbiddenException(
+        'Somente administradores podem atualizar a aula',
+      );
+
+    try {
+      await this.prisma.classroom.delete({ where: { id } });
+
+      return {
+        message: 'Aula deletada com sucesso',
+        status: HttpStatus.NO_CONTENT,
+      };
+    } catch (error) {
+      return {
+        message: 'Erro ao deletar aula',
+        errort: error,
+      };
+    }
   }
 }

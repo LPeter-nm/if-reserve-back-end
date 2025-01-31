@@ -11,10 +11,11 @@ import { CaslModule } from './modules/casl/casl.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './database/PrismaService';
-import { ReserveModule } from './modules/reserve/reserve.module';
+
 import { ReserveSportModule } from './modules/reserve-sport/reserve-sport.module';
 import { ReserveClassroomModule } from './modules/reserve-classroom/reserve-classroom.module';
 import { ReserveEventModule } from './modules/reserve-event/reserve-event.module';
+import { ReserveModule } from './modules/reserve/reserve.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
