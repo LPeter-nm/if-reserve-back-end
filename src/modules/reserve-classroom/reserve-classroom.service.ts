@@ -1,4 +1,9 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import {
   CreateReserveClassroomDto,
   UpdateReserveClassroomDto,
@@ -14,6 +19,13 @@ export class ReserveClassroomService {
       throw new ForbiddenException(
         'Somente administradores podem registrar aula',
       );
+
+    const reserveCheck = await this.prisma.reserve.findUnique({
+      where: { id: body.reserveId },
+    });
+
+    if (!reserveCheck)
+      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
 
     try {
       await this.prisma.reserve.update({
@@ -128,6 +140,13 @@ export class ReserveClassroomService {
       throw new ForbiddenException(
         'Somente administradores podem atualizar a aula',
       );
+
+    const reserveCheck = await this.prisma.reserve.findUnique({
+      where: { id: reserveId },
+    });
+
+    if (!reserveCheck)
+      throw new HttpException('Reserva não encontrada', HttpStatus.NOT_FOUND);
 
     try {
       await this.prisma.reserve.update({

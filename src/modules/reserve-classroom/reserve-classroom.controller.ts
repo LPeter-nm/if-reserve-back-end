@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ReserveClassroomService } from './reserve-classroom.service';
 import {
@@ -16,7 +17,9 @@ import {
 import { CheckPolicies } from '../casl/guards/policies.check';
 import { AppAbility } from '../casl/casl-ability.factory/casl-ability.factory';
 import { Action } from '../casl/casl-ability.factory/actionDTO/casl-actionDTO';
+import { PoliciesGuard } from '../casl/guards/policies.guard';
 
+@UseGuards(PoliciesGuard)
 @Controller('reserve-classroom')
 export class ReserveClassroomController {
   constructor(
@@ -32,11 +35,13 @@ export class ReserveClassroomController {
     return this.reserveClassroomService.create(createReserveClassroomDto, req);
   }
 
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Admin, 'all'))
   @Get()
   findAll(@Req() req: any) {
     return this.reserveClassroomService.findAll(req);
   }
 
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.User, 'all'))
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reserveClassroomService.findOne(id);
